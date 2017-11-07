@@ -14,7 +14,7 @@ Here's how you can interact with it:
 2. Tweet it to @JeffBarrizer
 3. Wait for your response
 
-![tweet](https://jeffbarrize.me/img/tweet.jpg)
+![tweet](imgs/tweet.jpg)
 
 # How was it built?
 
