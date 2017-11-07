@@ -5,7 +5,6 @@ Description: >
   It will create:
     - A VPC, IGW, Subnet, etc. for the the twitter bot
     - SSM Parameter set for API Credentials
-    - DynamoDB Table for Tweet Data
     - Two S3 Buckets (one for unprocessed images, and one for processed images)
     - A Kinesis Stream with 1 shard
     - A Lambda function
@@ -25,7 +24,7 @@ Parameters:
     NoEcho: True
   BotCodeBucket:
     Type: String
-    Default: aws-rekog-twitter-workshop-us-west-2
+    Default: jeffbarrizer-bot-code
     Description: "The S3 Bucket where your bot code is hosted. You can use our default lambda bot or replace this with your own code."
   BotCodeKey:
     Type: String
@@ -95,30 +94,10 @@ Mappings:
   RegionAMIMap:
     us-east-1:
       "64": ami-c58c1dd3
-#    us-east-2:
-#      "64": ami-4191b524
-#    us-west-1:
-#      "64": ami-7a85a01a
     us-west-2:
       "64": ami-4836a428
     eu-west-1:
       "64": ami-01ccc867
-#    eu-west-2:
-#      "64": ami-b6daced2
-#    eu-central-1:
-#      "64": ami-b968bad6
-#    ap-northeast-1:
-#      "64": ami-923d12f5
-#    ap-northeast-2:
-#      "64": ami-9d15c7f3
-#    ap-southeast-1:
-#      "64": ami-fc5ae39f
-#    ap-southeast-2:
-#      "64": ami-162c2575
-#    ap-south-1:
-#      "64": ami-52c7b43d
-#    us-gov-west-1:
-#      "64": ami-34e76355
 
 Resources:
   InfraVPC:
@@ -181,20 +160,7 @@ Resources:
   TweetStream:
       Type: AWS::Kinesis::Stream
       Properties:
-        ShardCount: 1
-
-  TweetsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: mid
-          AttributeType: S
-      KeySchema:
-        - AttributeName: mid
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ShardCount: 2
 
   UnprocessedBucket:
     Type: AWS::S3::Bucket
@@ -228,27 +194,6 @@ Resources:
               - Effect: Allow
                 Resource: arn:aws:logs:*:*:*
                 Action: logs:*
-              - Effect: Allow
-                Resource: "*"
-                Action:
-                  - xray:PutTraceSegments
-                  - xray:PutTelemetryRecords
-              - Effect: Allow
-                Resource:
-                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TweetsTable}
-                Action:
-                  - dynamodb:DeleteItem
-                  - dynamodb:GetItem
-                  - dynamodb:UpdateItem
-                  - dynamodb:PutItem
-                  - dynamodb:Query
-                  - dynamodb:Scan
-                  - dynamodb:BatchWriteItem
-                  - dynamodb:BatchGetItem
-                  - dynamodb:DescribeStream
-                  - dynamodb:ListStreams
-                  - dynamodb:GetShardIterator
-                  - dynamodb:GetRecords
               - Effect: Allow
                 Action:
                   - s3:GetObject
@@ -286,11 +231,9 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
             #!/bin/bash -xe
-            curl https://s3.dualstack.us-east-2.amazonaws.com/aws-xray-assets.us-east-2/xray-daemon/aws-xray-daemon-2.x.rpm -o /home/ec2-user/xray.rpm
-            yum install -y /home/ec2-user/xray.rpm
             yum update -y
-            pip install --upgrade python-twitter boto3 requests fleece
-            su - ec2-user -c "cd && wget https://s3.amazonaws.com/aws-rekog-twitter-workshop/stream.py"
+            pip install --upgrade python-twitter boto3 requests
+            su - ec2-user -c "cd && wget https://raw.githubusercontent.com/cloudacademy/jeffbarrizer-bot/master/streaming_app/stream.py"
             yum install -y --enablerepo=epel nodejs npm
             npm install -g forever
             su - ec2-user -c "cd && REGION=\"${AWS::Region}\" STREAM_NAME=\"${TweetStream}\" SSM_PARAMETER_NAME=\"${APIKeys}\" forever start -c python stream.py"
@@ -324,12 +267,9 @@ Resources:
       MemorySize: !Ref BotCodeMemory
       Timeout: !Ref BotCodeTimeout
       Role: !GetAtt TwitterBotRole.Arn
-      TracingConfig:
-        Mode: Active
       Environment:
         Variables:
           SSM_PARAMETER_NAME: !Ref APIKeys
-          DDB_TABLE: !Ref TweetsTable
           UNPROCESSED_BUCKET: !Ref UnprocessedBucket
           PROCESSED_BUCKET: !Ref ProcessedBucket
   TweetStreamLambdaMapping:
