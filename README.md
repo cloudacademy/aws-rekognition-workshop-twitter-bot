@@ -14,6 +14,8 @@ Here's how you can interact with it:
 2. Tweet it to @JeffBarrizer
 3. Wait for your response
 
+![tweet](https://jeffbarrize.me/img/tweet.jpg)
+
 # How was it built?
 
 The JeffBarrizer is built with AWS services such as S3, Kinesis, Rekognition, and Lambda. It is 90% serverless, as it provisions an Auto Scaling Group to ingest the stream of Tweets into Kinesis.
