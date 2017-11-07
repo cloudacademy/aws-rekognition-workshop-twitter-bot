@@ -1,3 +1,2 @@
 python-twitter
 boto3
-fleece
