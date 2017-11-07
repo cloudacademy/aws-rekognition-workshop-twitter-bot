@@ -18,9 +18,9 @@ Here's how you can interact with it:
 
 # How was it built?
 
-The JeffBarrizer is built with AWS services such as S3, Kinesis, Rekognition, and Lambda. It is 90% serverless, as it provisions an Auto Scaling Group to ingest the stream of Tweets into Kinesis.
+The JeffBarrizer is built with AWS services such as S3, Kinesis, Rekognition, and Lambda. It is 90% serverless, as it provisions an Auto Scaling Group only to elastically ingest the stream of Tweets into Kinesis.
 
-Note: this repo is a fork and for the most part based on [Randall Hunt](https://twitter.com/jrhunt)'s work. You can find the original workshop material and the corresponding instructions at [awslabs/aws-rekognition-workshop-twitter-bot](https://github.com/awslabs/aws-rekognition-workshop-twitter-bot).
+Note: this repo is a fork and for the most part based on [Randall Hunt](https://twitter.com/jrhunt)'s work. You can find the original workshop material and the corresponding instructions here: [awslabs/aws-rekognition-workshop-twitter-bot](https://github.com/awslabs/aws-rekognition-workshop-twitter-bot).
 
 # Credits
 
@@ -29,4 +29,4 @@ The JeffBarrizer Bot has been a weekend project, designed just for fun by [Alex 
 # Additional Resources
 
 * [JeffBarrizer on Twitter](https://twitter.com/JeffBarrizer)
-* [JeffBarrizer's website](https://jeffbarrize.me)
+* [JeffBarrizer's website (Live Stream)](https://jeffbarrize.me)
