@@ -8,7 +8,9 @@ Please be polite, it's just a friendly bot.
 
 # How it works
 
-The JeffBarrizer bot will respond to every tweet that contains an image, but it won't actually do much if the image doesn't contain a face, or if it's not SFW.
+The JeffBarrizer bot will respond to every tweet that contains an image.
+
+Note: it won't actually do much if the image is NSFW or doesn't contain a face.
 
 Here's how you can interact with it:
 
@@ -27,7 +29,7 @@ Note: this repo is a fork and for the most part based on [Randall Hunt](https://
 # Additional Resources
 
 * [JeffBarrizer on Twitter](https://twitter.com/JeffBarrizer)
-* [JeffBarrizer's website (Live Stream)](https://jeffbarrize.me)
+* [JeffBarrizer's website](https://jeffbarrize.me)
 
 
 # Credits
